@@ -58,6 +58,7 @@ $searchresult = mysqli_query($mysqli, $sql);
     </p>
 	<h4>Employees</h4>
 	<table width='80%' border=0>
+	<thead>
 		<tr bgcolor='#DDDDDD'>
 			<td><strong>Email</strong></td>
 			<td><strong>Password</strong></td>
@@ -68,6 +69,9 @@ $searchresult = mysqli_query($mysqli, $sql);
 			<td><strong>Address</strong></td>
 			<td><strong>Action</strong></td>
 		</tr>
+	</thead>
+	<tbody>
+
 		<?php
 		// Fetch the next row of a result set as an associative array
 
@@ -80,35 +84,67 @@ $searchresult = mysqli_query($mysqli, $sql);
 					//red
 					$gender = "<td style='color:red'>".$res['gender']."</td>";
 				}
+				
+				$salary = $res["salary"];
+				if(is_null($salary)) {
+					$salary = "<span style='color:red;'>NULL</span>";
+				} else {
+				$total_sal += $salary;
+				$count_sal++;}
+
 				echo "<tr>";
 				echo "<td>".$res['email']."</td>";	
 				echo "<td>".$res['password']."</td>";
 				echo "<td>".$res['name']."</td>";
 				echo "<td>".$res['role']."</td>";
 				echo $gender;
-				echo "<td>".$res['salary']."</td>";
+				echo "<td>".$salary."</td>";
 				echo "<td>".$res['address']."</td>";
 				echo "<td><a href=\"edit.php?id=$res[id]\">Edit</a> | 
 				<a href=\"delete.php?id=$res[id]\" onClick=\"return confirm('Are you sure you want to delete?')\">Delete</a></td>";
 			}
 		}else{
 			while ($res = mysqli_fetch_assoc($result)) {
+
+				if($res['gender'] == 'M'){
+					//blue
+					$gender = "<td style='color:blue'>".$res['gender']."</td>";
+				}else{
+					//red
+					$gender = "<td style='colores['salary']r:red'>".$res['gender']."</td>";
+				}
+
+				$salary = $res["salary"];
+
+				if(is_null($salary)) {
+					$salary = "<span style='color:red;'>NULL</span>";
+				} else {
+					$total_sal += $salary;
+					$count_sal++;
+				}
+
 				echo "<tr>";
 				echo "<td>".$res['email']."</td>";	
 				echo "<td>".$res['password']."</td>";
 				echo "<td>".$res['name']."</td>";
 				echo "<td>".$res['role']."</td>";
-				echo "<td>".$res['gender']."</td>";
-				echo "<td>".$res['salary']."</td>";
+				echo $gender;
+				echo "<td>".$salary."</td>";
 				echo "<td>".$res['address']."</td>";
 				echo "<td><a href=\"edit.php?id=$res[id]\">Edit</a> | 
 				<a href=\"delete.php?id=$res[id]\" onClick=\"return confirm('Are you sure you want to delete?')\">Delete</a></td>";
 			}
 		}
-			
 		?>
+  		</tbody>
 	</table>
-
+	<?php 
+	# calculate & display average salary
+	if($count_sal > 0) {
+		$avg_sal = $total_sal / $count_sal;
+		echo "<b>Average Salary: ". $avg_sal ."</b>";
+	}
+	?>
 	<hr>
 	<h4>Products</h4>
 	<table width='80%' border=0>
@@ -126,22 +162,33 @@ $searchresult = mysqli_query($mysqli, $sql);
 		</tr>
 		<?php
 		// Fetch the next row of a result set as an associative array
-		while ($res = mysqli_fetch_assoc($productresult)) {
+		while ($resp = mysqli_fetch_assoc($productresult)) {
         	echo "<tr>";
-			echo "<td>".$res['pid']."</td>";	
-			echo "<td>".$res['product_name']."</td>";
-			echo "<td>".$res['description']."</td>";
-            echo "<td>".$res['product_type']."</td>";
-			echo "<td>".$res['cost']."</td>";
-			echo "<td>".$res['sell_price']."</td>";
-			echo "<td>".$res['quantity']."</td>";
-			echo "<td>".$res['vname']."</td>";
-            echo "<td>".$res['ename']."</td>";
+			echo "<td>".$resp['pid']."</td>";	
+			echo "<td>".$resp['product_name']."</td>";
+			echo "<td>".$resp['description']."</td>";
+            echo "<td>".$resp['product_type']."</td>";
+			echo "<td>".$resp['cost']."</td>";
+			echo "<td>".$resp['sell_price']."</td>";
+			echo "<td>".$resp['quantity']."</td>";
+			echo "<td>".$resp['vname']."</td>";
+            echo "<td>".$resp['ename']."</td>";
             echo "</tr>";
 
-
+			$sell_price = $resp["sell_price"];
+			$quantity = $resp["quantity"];
+			$cost = $resp["cost"];
+	
+			$total_profit = ($sell_price-$cost)*$quantity;
+			$total_profit += $total_profit;
 		}
 		?>
 	</table>
+	<?php 
+	if($total_profit > 0) {
+		// $avg_sal = $total_sal / $count_sal;
+		echo "<b>Total Profit: ". $total_profit ."</b>";
+	}
+	?>
 </body>
 </html>

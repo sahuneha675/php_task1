@@ -1,6 +1,25 @@
 <?php
 require_once("dbConnection.php");
 
+## Check IP if it is inside Kean domain
+if (!empty($_SERVER['HTTP_CLIENT_IP']))
+   {   $ip = $_SERVER['HTTP_CLIENT_IP'];  }
+elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+   {   $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];  }
+else {  $ip = $_SERVER['REMOTE_ADDR'];   }
+
+  echo "Your IP: $ip\n";
+  $IPv4= explode(".",$ip);
+  if (($IPv4[0] == 10) or ($IPv4[0] . "." . $IPv4[1] == "131.125") )
+  { 
+    echo "<br>You are from Kean Unversity.\n"; 
+  }
+  else  
+  { 
+    echo "<br>You are NOT from Kean Unversity.\n"; 
+  }
+
+echo "<br>\n";
 //    include('session.php');
 session_start();
 if (isset($_SESSION)) {
@@ -54,7 +73,7 @@ WHERE p.added_by='".$data['id']."'");
 			<td><strong>Sell price</strong></td>
 			<td><strong>Quantity</strong></td>
 			<td><strong>Vendor Name</strong></td>
-            <td><strong>Added by employee</strong></td>
+      <td><strong>Added by employee</strong></td>
 
 		</tr>
 		<?php
@@ -64,7 +83,7 @@ WHERE p.added_by='".$data['id']."'");
 			echo "<td>".$res['pid']."</td>";	
 			echo "<td>".$res['product_name']."</td>";
 			echo "<td>".$res['description']."</td>";
-            echo "<td>".$res['product_type']."</td>";
+      echo "<td>".$res['product_type']."</td>";
 			echo "<td>".$res['cost']."</td>";
 			echo "<td>".$res['sell_price']."</td>";
 			echo "<td>".$res['quantity']."</td>";
